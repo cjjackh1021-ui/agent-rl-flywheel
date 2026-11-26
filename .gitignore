@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Environments & secrets
+.venv/
+.venv_*/
+venv/
+.env
+*.env.local
+
+# Experiment outputs, checkpoints & generated datasets
+outputs/
+checkpoints/
+data/generated/
+wandb/
+swanlab/
+
+# Testing & IDE
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+.vscode/
+.idea/

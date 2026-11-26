@@ -1,0 +1,69 @@
+# RTX 4070 SUPER 12GB 主力配置：Qwen3.5-2B 学生 + DeepSeek-V4.1-Flash Teacher
+experiment_name: qwen35_2b_4070_flywheel
+seed: 42
+
+model:
+  backend: hf_qlora
+  student_model: Qwen/Qwen3.5-2B
+  qlora_4bit: true
+  compute_dtype: bfloat16
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  lora_target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+  gradient_checkpointing: true
+  max_seq_len: 2048
+  max_new_tokens_per_turn: 384
+
+teacher:
+  provider: deepseek
+  teacher_model: deepseek-flash
+  teacher_base_url: https://api.deepseek.com
+  api_key_env: DEEPSEEK_API_KEY
+  temperature: 0.3
+  max_tokens: 1024
+
+harness:
+  max_turns: 4
+  soft_max_tokens: 1400
+  hard_max_tokens: 2048
+  overlong_penalty_max: 0.30
+
+dataset:
+  total_id: 1400
+  total_ood: 100
+  coldstart_count: 300
+  rl_count: 800
+  val_count: 150
+
+training:
+  sft_lr: 1.5e-4
+  sft_epochs: 2
+  dpo_lr: 5.0e-5
+  dpo_beta: 0.1
+  dpo_epochs: 1
+  rl_lr: 2.0e-5
+  rl_steps: 120
+  prompts_per_step: 4
+  group_size: 4
+  grad_accum_steps: 4
+  max_grad_norm: 1.0
+  clip_eps_low: 0.2
+  clip_eps_high: 0.28
+  kl_beta: 0.02
+  dynamic_sampling: true
+  min_group_std: 0.05
+
+ragen2:
+  enabled: true
+  snr_min_reward_std: 0.05
+  snr_top_k_ratio: 0.75
+  mi_collapse_threshold: 0.15
+  entropy_healthy_min: 0.30
